@@ -169,7 +169,7 @@ export const TaskView = () => {
         return p.userId === id
       });
 
-      debugger;
+      
       if (openTask.length > 0)
         setIsOpenedTask(true)
       else
@@ -187,7 +187,7 @@ export const TaskView = () => {
   const openModal = (row) => {
 
     const userId = row.original.userId;
-    debugger;
+    
     if (userId === id) {
       const taskId = row.original.id;
       dispatch(editTask(taskId));

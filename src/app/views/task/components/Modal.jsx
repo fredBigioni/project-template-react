@@ -105,7 +105,7 @@ export const Modal = (props) => {
     }
 
     const saveNewFinishedTaskMethod = (event) => {
-        debugger;
+        
         const projectId = projectList.filter(function (p) { return p.description === event.target["project-select"].value; })[0].id;
         const roadmapId = roadmapList.filter(function (p) { return p.description === event.target["roadmap-select"].value && p.projectId === projectId; })[0].id
         var objectToSend = {
@@ -169,7 +169,7 @@ export const Modal = (props) => {
         if (id) dispatch(getRoadmapsData(id));
     }
 
-    debugger;
+    
     return (
         <>
             {
