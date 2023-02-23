@@ -13,9 +13,9 @@ export const Menu = () => {
             {
                 menuObjectList.map(({ itemTitle, urlNavigate, subMenues }) => {
                     return (
-                        <CanByRol>
+                        <CanByRol key={itemTitle}>
                             <ItemMenu
-                                key={itemTitle}
+                                
                                 itemTitle={itemTitle}
                                 rolId={rolId}
                                 urlNavigate={urlNavigate}

@@ -17,6 +17,7 @@ export const getUserTasks = (userId) => {
 
         const url = "/Tasks/by-user/" + userId;
         dispatch(setIsLoadingData(true));
+        
         await endPoint.get(url).
             then((response) => {
                 var resp = response.data;

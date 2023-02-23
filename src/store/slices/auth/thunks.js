@@ -11,7 +11,7 @@ export const startLogin = (username, password) => {
 
             const user = { "username": username, "password": password };
 
-            const { data } = await endPoint.post('/users/authenticate', user);
+            const { data } = await endPoint.post('/auth/authenticate', user);
 
             dispatch(login(data));
 
