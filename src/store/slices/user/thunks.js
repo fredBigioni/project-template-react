@@ -1,13 +1,13 @@
 import axios from 'axios';
 import { endPoint } from '../../../api';
 import swal from 'sweetalert';
-import { loadUsersData } from "./userSlice";
+import { changeStateModal, loadUsersData } from "./userSlice";
 
 export const getAllUsers = () => {
     return async (dispatch) => {
         const url = "Users/GetAllUsers/";
 
-        await endPoint.get(url).
+        await axios.get(url).
             then((response) => {
 
                 var resp = response.data;
@@ -29,9 +29,9 @@ export const saveNewUser = (data) => {
     return async (dispatch) => {
         const url = "Users/create-user/";
 
-        await endPoint.post(url, data, { headers: { 'Content-Type': 'application/json' } }).
+        await axios.post(url, data, { headers: { 'Content-Type': 'application/json' } }).
             then((response) => {
-                debugger;
+                
                 var resp = response.data;
                 dispatch(loadUsersData(resp));
             })
@@ -52,11 +52,10 @@ export const updateUser = (data) => {
     return async (dispatch) => {
         const url = "Users/update-by-id/" + data.id;
 
-        await endPoint.put(url, data, { headers: { 'Content-Type': 'application/json' } }).
-            then((response) => {
-                debugger;
-                var resp = response.data;
-                dispatch(loadUsersData(resp));
+        await axios.put(url, data, { headers: { 'Content-Type': 'application/json' } }).
+            then((response) => {            
+                var resp = response.data;    
+                dispatch(changeStateModal(false));            
             })
             .catch((error) => {
                 console.log(error);
@@ -75,9 +74,9 @@ export const deleteUser = (userId) => {
     return async (dispatch) => {
         const url = "Users/update-by-id/" + userId;
 
-        await endPoint.put(url, userId, { headers: { 'Content-Type': 'application/json' } }).
+        await axios.put(url, userId, { headers: { 'Content-Type': 'application/json' } }).
             then((response) => {
-                debugger;
+                
                 var resp = response.data;
                 dispatch(loadUsersData(resp));
             })

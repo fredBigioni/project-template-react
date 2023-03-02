@@ -21,60 +21,61 @@ export const LoginPage = () => {
 
     dispatch(startLogin(username, password));
 
-  }  
+  }
 
   return (
-    <AuthLayout title='TimeTracker Login'>
-      <form
-        onSubmit={onAuthenticate}
-      >
-        <fieldset disabled={isLoading}>
-          <Grid container>
-            <Grid item xs={12} sx={{ mt: 2 }}>
-              <TextField
-                name='username'
-                label="UserName"
-                type="text"
-                variant="outlined"
-                placeholder="Ingrese su username"
-                fullWidth
-                sx={{
-                  color: 'white'
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sx={{ mt: 2 }}>
-              <TextField
-                name='password'
-                label="Password"
-                type="password"
-                variant="outlined"
-                fullWidth />
-            </Grid>
-          </Grid>
-          <Grid container spacing={2} sx={{ mb: 2, mt: 1 }}>
-            <Grid item xs={12} sm={12}>
-              <Button
-                variant='contained'
-                type='submit'
-                color='success'
-                fullWidth>
-                <Typography variant='buttonFont'>Login</Typography>
-              </Button>
-            </Grid>
-            <Grid container spacing={2} sx={{ mt: 2, ml: 35 }}>
-              <Grid item xs={12} sm={12}>
-                <Typography
+    
+      <AuthLayout title='TimeTracker Login'>
+        <form
+          onSubmit={onAuthenticate}
+        >
+          <fieldset disabled={isLoading}>
+            <Grid container>
+              <Grid item xs={12} sx={{ mt: 2 }}>
+                <TextField
+                  name='username'
+                  label="UserName"
+                  type="text"
+                  variant="outlined"
+                  placeholder="Ingrese su username"
+                  fullWidth
                   sx={{
-                    fontSize: '12px',
-
-                  }}>
-                  <i><b>V2.0</b></i></Typography>
+                    // color: 'white'
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sx={{ mt: 2 }}>
+                <TextField
+                  name='password'
+                  label="Password"
+                  type="password"
+                  variant="outlined"
+                  fullWidth />
               </Grid>
             </Grid>
-          </Grid>
-        </fieldset>
-      </form>
-    </AuthLayout >
+            <Grid container spacing={2} sx={{ mb: 2, mt: 1 }}>
+              <Grid item xs={12} sm={12}>
+                <Button
+                  variant='contained'
+                  type='submit'
+                  color='secondary'
+                  fullWidth>
+                  <Typography variant='buttonFont'>Login</Typography>
+                </Button>
+              </Grid>
+              <Grid container spacing={2} sx={{ mt: 2, ml: 35 }}>
+                <Grid item xs={12} sm={12}>
+                  <Typography
+                    sx={{
+                      fontSize: '12px',
+
+                    }}>
+                    <i><b>V2.0</b></i></Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+          </fieldset>
+        </form>
+      </AuthLayout >    
   )
 }

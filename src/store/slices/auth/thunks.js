@@ -2,6 +2,7 @@ import { endPoint } from "../../../api"
 import { setIsLoading } from "../general";
 import { login, setStateLoding } from "./authSlice";
 import swal from 'sweetalert';
+import axios from "axios";
 
 export const startLogin = (username, password) => {
     return async (dispatch) => {
@@ -11,7 +12,7 @@ export const startLogin = (username, password) => {
 
             const user = { "username": username, "password": password };
 
-            const { data } = await endPoint.post('/auth/authenticate', user);
+            const { data } = await axios.post('/auth/authenticate', user);
 
             dispatch(login(data));
 

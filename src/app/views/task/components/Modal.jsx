@@ -12,15 +12,20 @@ import {
 import { Close, Edit, Fingerprint } from '@mui/icons-material'
 import PropTypes from 'prop-types';
 import swal from 'sweetalert';
-import { createEditTask, createFinishNewTask, createNewTask, getRoadmapsData } from '../../../../store';
+import {
+    createEditTask, createFinishNewTask, createNewTask, findOnMantis, getRoadmapsData,
+    setFingerprintMantis, setIsLoading, setReferenceValidated, setSelectedRoadmap
+} from '../../../../store';
 
 
 export const Modal = (props) => {
     const { onClose, open, title, data } = props;
     const { projectList, roadmapList, isLoading, taskEdit,
-        isDisabled, actionType, enableMantisFinder, projectDescription } = useSelector(state => state.task);
+        isDisabled, actionType, enableMantisFinder, projectDescription, labelMantisReference,
+        selectedRoadmap, referenceValidated } = useSelector(state => state.task);
 
-    // 
+    const [projectSelectedChange, setProjectSelectedChange] = useState('');
+    const [referenceNumber, setReferenceNumber] = useState('');
     const [projectSelected, setProjectSelected] = useState('');
 
     useEffect(() => {
@@ -105,7 +110,7 @@ export const Modal = (props) => {
     }
 
     const saveNewFinishedTaskMethod = (event) => {
-        
+
         const projectId = projectList.filter(function (p) { return p.description === event.target["project-select"].value; })[0].id;
         const roadmapId = roadmapList.filter(function (p) { return p.description === event.target["roadmap-select"].value && p.projectId === projectId; })[0].id
         var objectToSend = {
@@ -166,10 +171,32 @@ export const Modal = (props) => {
     };
 
     const handleChangeProject = (selected, { id }) => {
+
+        setProjectSelectedChange(id)
+
+        if (id === 207) {
+            dispatch(setFingerprintMantis(true));
+        }
+
         if (id) dispatch(getRoadmapsData(id));
     }
 
-    
+    const setDefaultRoadmapValue = (event) => {
+
+        // event.preventDefault();
+        // const roadmapId = roadmapList.filter(function (p) { return p.description === event.target.textContent && p.projectId === 207; })[0];
+        dispatch(setSelectedRoadmap(event.target.textContent));
+    }
+
+    const renderReferenceColor = () => {
+        switch (referenceValidated) {
+            case "true": return ("green")
+            case "false": return ("red")
+            default: return ("black")
+        }
+    }
+
+
     return (
         <>
             {
@@ -236,15 +263,30 @@ export const Modal = (props) => {
                                                                 fullWidth
                                                             />
                                                             :
-                                                            <Autocomplete
-                                                                disablePortal
-                                                                id="roadmap-select"
-                                                                options={roadmapList}
-                                                                getOptionLabel={(option) => option.description}
-                                                                name="Roadmap"
-                                                                disabled={isDisabled}
-                                                                renderInput={(params) => <TextField {...params} label="Roadmap" />}
-                                                            />
+                                                            projectSelectedChange && selectedRoadmap ?
+                                                                <Autocomplete
+                                                                    disablePortal
+                                                                    id="roadmap-select"
+                                                                    options={roadmapList}
+                                                                    getOptionLabel={(option) => option.description}
+                                                                    name="Roadmap"
+                                                                    disabled={isDisabled}
+                                                                    value={selectedRoadmap}
+                                                                    renderInput={(params) => <TextField {...params} label="Roadmap" />}
+                                                                    onChange={(event) => setDefaultRoadmapValue(event)}
+                                                                />
+                                                                :
+                                                                <Autocomplete
+                                                                    disablePortal
+                                                                    id="roadmap-select"
+                                                                    options={roadmapList}
+                                                                    getOptionLabel={(option) => option.description}
+                                                                    name="Roadmap"
+                                                                    disabled={isDisabled}
+                                                                    // value={selectedRoadmap}
+                                                                    renderInput={(params) => <TextField {...params} label="Roadmap" />}
+                                                                    onChange={(event) => setDefaultRoadmapValue(event)}
+                                                                />
                                                     }
                                                 </Grid>
                                             }
@@ -266,13 +308,13 @@ export const Modal = (props) => {
                                                         ''
                                                     }
                                                     disabled={isDisabled}
-                                                // onChange={(ev) => setReferenceNumber(ev.target.value)}
+                                                    onChange={(ev) => setReferenceNumber(ev.target.value)}
                                                 // onKeyDown={(e) => {
-                                                //     if (filters.reference.validated) { dispatch(setReferenceValidated(null)) }
+                                                //     if (referenceValidated) { dispatch(setReferenceValidated(null)) }
                                                 // }}
                                                 />
                                                 <div className="labelMantis">
-                                                    {/* <b><i>{filters.reference.labelMantisReference}</i></b> */}
+                                                    <b><i>{labelMantisReference}</i></b>
                                                 </div>
                                             </Grid>
                                             <Grid item xs={3} sx={{ mt: 2 }}>
@@ -281,7 +323,7 @@ export const Modal = (props) => {
                                                         <IconButton
                                                             color="secondary"
                                                             aria-label="add an alarm"
-                                                        // onClick={() => { dispatch(findOnMantis({ referenceNumber })) }}
+                                                            onClick={() => { dispatch(findOnMantis({ referenceNumber })) }}
                                                         >
                                                             <Fingerprint />
                                                         </IconButton>
@@ -372,6 +414,6 @@ export const Modal = (props) => {
 }
 
 Modal.propTypes = {
-    onClose: PropTypes.func.isRequired,
-    open: PropTypes.bool.isRequired,
+    // onClose: PropTypes.func.isRequired,
+    // open: PropTypes.bool.isRequired,
 };

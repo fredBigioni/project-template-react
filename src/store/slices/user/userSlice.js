@@ -13,11 +13,16 @@ export const userSlice = createSlice({
     initialState,
     reducers: {
         loadUsersData: (state, { payload }) => {
-            debugger;
             state.userData = payload.map((d) => {
                 return d;
             });
         },
+        changeStateModal: (state, { payload }) => {
+            state.isModalOpening = payload;
+        },
+        changeIsLoading: (state, { payload }) => {
+            state.isLoading = payload;
+        }
     }
 });
 
@@ -25,4 +30,6 @@ export const userSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
     loadUsersData,
+    changeStateModal,
+    changeIsLoading,
 } = userSlice.actions;

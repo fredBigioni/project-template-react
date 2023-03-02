@@ -1,46 +1,43 @@
 import React, { Suspense, useEffect, useMemo, useState } from 'react';
-import { Box, Card, CardContent, CircularProgress, Grid, Stack, Typography } from '@mui/material'
+import { Box, Button, Card, CardContent, CircularProgress, Grid, IconButton, Stack, Tooltip, Typography } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import MaterialReactTable from 'material-react-table';
 import { Modal } from './components';
-import { getAllUsers } from '../../../store';
-import { Edit } from '@mui/icons-material';
+import { changeIsLoading, changeStateModal, getAllUsers } from '../../../store';
+import { AlarmAdd, Edit } from '@mui/icons-material';
 
 export const UserView = () => {
 
-    const { user } = useSelector(state => state.auth);
+    const { id } = useSelector(state => state.auth.user);
     const { userData, isLoading, isModalOpening } = useSelector(state => state.user);
     const [title, setTitle] = useState('');
+    const [dataModal, setDataModal] = useState({});
 
     const dispatch = useDispatch();
 
     const handleClose = (value) => {
-        // dispatch(setModalState(false));
+        dispatch(changeStateModal(false));
     };
 
-    const openModal = (row) => {
-
-        const userId = row.original.userId;
-
-        if (userId === id) {
-            const taskId = row.original.id;
-            //   dispatch(editTask(taskId));
-        }
-        else {
-            swal({
-                title: "Error",
-                text: "No se puede cerrar una tarea que no sea propia",
-                icon: "error",
-                dangerMode: true,
-            })
-        }
+    const openEditModal = (row) => {
+        setDataModal(row.original);
+        dispatch(changeStateModal(true));
+        dispatch(changeIsLoading(false));
     };
+
+    const openNewModal = () => {
+        setDataModal(null);
+        dispatch(changeStateModal(true));
+        dispatch(changeIsLoading(false));
+    }
 
     const handleEdit = (row) => {
-        const taskId = row.original.id;
+        // const taskId = row.original.id;
         setTitle('Editar Usuario');
+        dispatch(changeIsLoading(true));
         // dispatch(setActionType('Edit'));
-        openModal(row);
+        // dispatch(setActionType('Edit'));
+        openEditModal(row);
     }
     const columnsUsersData = useMemo(() => [
         {
@@ -135,13 +132,31 @@ export const UserView = () => {
 
     useEffect(() => {
         dispatch(getAllUsers());
-    }, [])
+    }, [isModalOpening])
 
     const renderColumnActions = () => {
         return (
-            <>Actions</>
+            <>
+                <Grid container>
+                    <Tooltip title="Nuevo Usuario">
+                        <IconButton
+                            color="secondary"
+                            sx={{
+                                // marginBottom: 3
+                            }}
+                            onClick={() => {
+                                setTitle('Nuevo Usuario');
+                                openNewModal();
+                            }}
+                        >
+                            <AlarmAdd />
+                        </IconButton>
+                    </Tooltip>
+                </Grid>
+            </>
         );
     }
+
     return (
         <>
 
@@ -149,6 +164,7 @@ export const UserView = () => {
                 open={isModalOpening}
                 onClose={handleClose}
                 title={title}
+                data={dataModal}
             />
             {/* <Grid container spacing={1}>
                 <Grid item xs={4}>
@@ -187,37 +203,36 @@ export const UserView = () => {
                             <Card>
                                 <Stack spacing={1} direction="column">
                                     {
-                                        // isLoading ? <CircularProgress disableShrink /> :
-                                        <>
-                                            <Suspense fallback={<CircularProgress disableShrink />}>
-                                                <MaterialReactTable
-                                                    columns={columnsUsersData}
-                                                    data={userData}
-                                                    title='Tareas del Equipo'
-                                                    displayColumnDefOptions={{
-                                                        'mrt-row-actions': {
-                                                            Header: renderColumnActions,
-                                                            size: 100,
-                                                            //use a text button instead of a icon button
-                                                            Cell: ({ row, table }) => (
-                                                                // <Button onClick={() => table.setEditingRow(row)}>Edit Customer</Button>
-                                                                <span><Edit className='editIcon'
-                                                                    onClick={() => {
-                                                                        alert(row)
-                                                                    }} /></span>
-                                                            ),
-                                                        }
-                                                    }}
-                                                    initialState={{ pagination: { pageSize: 5, pageIndex: 0 } }}
-                                                    muiTableProps={{
-                                                        sx: {
-                                                            tableLayout: 'fixed',
-                                                        },
-                                                    }}
-                                                    enableEditing
-                                                />
-                                            </Suspense>
-                                        </>
+                                        !userData ? <CircularProgress disableShrink /> :
+                                            <>
+                                                <Suspense fallback={<CircularProgress disableShrink />}>
+                                                    <MaterialReactTable
+                                                        columns={columnsUsersData}
+                                                        data={userData}
+                                                        displayColumnDefOptions={{
+                                                            'mrt-row-actions': {
+                                                                Header: renderColumnActions,
+                                                                size: 100,
+                                                                //use a text button instead of a icon button
+                                                                Cell: ({ row, table }) => (
+                                                                    // <Button onClick={() => table.setEditingRow(row)}>Edit Customer</Button>
+                                                                    <span><Edit className='editIcon'
+                                                                        onClick={() => {
+                                                                            handleEdit(row)
+                                                                        }} /></span>
+                                                                ),
+                                                            }
+                                                        }}
+                                                        initialState={{ pagination: { pageSize: 5, pageIndex: 0 } }}
+                                                        muiTableProps={{
+                                                            sx: {
+                                                                tableLayout: 'fixed',
+                                                            },
+                                                        }}
+                                                        enableEditing
+                                                    />
+                                                </Suspense>
+                                            </>
                                     }
                                 </Stack>
                             </Card>

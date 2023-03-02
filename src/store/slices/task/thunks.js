@@ -10,6 +10,8 @@ import {
     loadProjectData,
     loadRoadmapData,
     setModalState,
+    setLabelReference,
+    setSelectedRoadmap,
 } from './taskSlice';
 
 export const getUserTasks = (userId) => {
@@ -17,8 +19,8 @@ export const getUserTasks = (userId) => {
 
         const url = "/Tasks/by-user/" + userId;
         dispatch(setIsLoadingData(true));
-        
-        await endPoint.get(url).
+
+        await axios.get(url).
             then((response) => {
                 var resp = response.data;
 
@@ -44,10 +46,10 @@ export const getOpenTasks = (teamId) => {
 
         const url = "/Tasks/by-open/" + teamId;
         dispatch(setIsLoadingData(true));
-        await endPoint.get(url).
+        await axios.get(url).
             then((response) => {
                 var resp = response.data;
-                
+
                 dispatch(loadTeamData(resp));
             })
             .catch((error) => {
@@ -72,7 +74,7 @@ export const getProjectsData = (teamId) => {
         dispatch(setIsLoadingData(true));
         dispatch(setDisabled(true));
 
-        await endPoint.get(url).
+        await axios.get(url).
             then((response) => {
                 var resp = response.data;
                 dispatch(loadProjectData(resp));
@@ -91,7 +93,7 @@ export const getRoadmapsData = (projectId) => {
         const url = "Tasks/roadmaps-data/" + projectId;
         // dispatch(setIsLoadingData(true));
         // dispatch(setDisabled(true));
-        await endPoint.get(url).
+        await axios.get(url).
             then((response) => {
                 var resp = response.data;
 
@@ -125,7 +127,7 @@ export const createFinishNewTask = (dataToSave) => {
 
         var data = dataToSave;
 
-        await endPoint.post(url, data, { headers: { 'Content-Type': 'application/json' } }).
+        await axios.post(url, data, { headers: { 'Content-Type': 'application/json' } }).
             then((response) => {
                 var resp = response.data;
                 dispatch(setModalState(false));
@@ -148,7 +150,7 @@ export const createNewTask = (dataToSave) => {
 
         var data = dataToSave;
 
-        await endPoint.post(url, data, { headers: { 'Content-Type': 'application/json' } }).
+        await axios.post(url, data, { headers: { 'Content-Type': 'application/json' } }).
             then((response) => {
                 var resp = response.data;
                 dispatch(setModalState(false));
@@ -171,7 +173,7 @@ export const createEditTask = (dataToSave) => {
         const url = "Tasks/save-edit-task/";
         var data = dataToSave;
 
-        await endPoint.put(url, data, { headers: { 'Content-Type': 'application/json' } }).
+        await axios.put(url, data, { headers: { 'Content-Type': 'application/json' } }).
             then((response) => {
                 var resp = response.data;
                 dispatch(setModalState(false));
@@ -192,7 +194,7 @@ export const editTask = (taskId) => {
     return async (dispatch) => {
         const url = "Tasks/get-specifict-task/" + taskId;
 
-        endPoint.get(url).
+        await axios.get(url).
             then((response) => {
                 var resp = response.data;
 
@@ -201,7 +203,7 @@ export const editTask = (taskId) => {
                 }
             })
             .catch((error) => {
-                
+
                 console.log(error);
 
                 swal({
@@ -212,4 +214,56 @@ export const editTask = (taskId) => {
                 });
             })
     }
+}
+
+export const findOnMantis = ({ referenceNumber }) => {
+
+    return async (dispatch) => {
+        var dataToSend = {
+            validated: "false",
+            description: '',
+            // projectId: 0,
+            // projectDescription: '',
+            // roadmapDescription: ''
+        }
+        const re = /^[0-9\b]+$/;
+        if (!re.test(referenceNumber)) {
+            swal({
+                title: "Error",
+                text: "Para validar contra mantis debe ingresar un número de referencia",
+                icon: "error",
+                dangerMode: true,
+            });
+        }
+        else {
+
+            const url = "Tasks/mantis-referenceData/" + referenceNumber;
+
+            // dispatch(setDisabledReferenceFilter(true));
+            // dispatch(setDisabledRoadmapFilter(true));
+            // dispatch(setDisabledProjectFilter(true));
+
+            await axios.get(url).
+                then((response) => {
+
+                    var resp = response.data;
+
+                    dispatch(setLabelReference(resp));
+                    
+                    dispatch(setSelectedRoadmap(resp.data.roadmapDescription));
+
+                    if (resp.data.description === null) {
+                        dispatch(setReferenceValidated(null));
+                    } else {
+                        dispatch(setReferenceValidated(true));
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                    // dispatch(loadReferenceData({ data: { roadmapList: [] } }));
+                    // dispatch(setReferenceValidated(dataToSend));
+                })
+        }
+    }
+
 }

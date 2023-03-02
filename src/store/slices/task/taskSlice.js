@@ -15,8 +15,11 @@ const initialState = {
         projectDescription: null,
         roadmapDescription: null
     },
+    labelMantisReference: '',
+    isMantisEdited: false,
     projectDescription: '',
     roadmapDescription: '',
+    selectedRoadmap: { description: '' },
     reference: '',
     observation: '',
     start: null,
@@ -25,6 +28,7 @@ const initialState = {
     isLoading: false,
     isDisabled: false,
     isModalOpening: false,
+    referenceValidated: false,
 };
 
 export const taskSlice = createSlice({
@@ -80,7 +84,43 @@ export const taskSlice = createSlice({
         },
         setActionType: (state, { payload }) => {
             state.actionType = payload;
-        }
+        },
+        setFingerprintMantis: (state, { payload }) => {
+            state.enableMantisFinder = payload;
+        },
+        setLabelReference: (state, { payload }) => {
+            if (payload) {
+                state.labelMantisReference = payload.data.description;
+            }
+            else {
+                state.labelMantisReference = '';
+            }
+        },
+        setSelectedRoadmap: (state, { payload }) => {
+
+            const roadmapSel = state.roadmapList.filter(function (p) { return p.description === payload && p.projectId === 207; })[0];
+            if (roadmapSel) {
+                state.selectedRoadmap = roadmapSel;
+            }
+            // else {
+            //     state.selectedRoadmap = {
+            //         description: "",
+            //     };
+            // }
+        },
+        setReferenceValidated: (state, { payload }) => {
+            if (payload) {
+                state.isMantisEdited = true;
+                state.referenceValidated = payload;
+                // state.taskForm.filters.reference.labelMantisReference = payload.description;
+                // state.taskForm.filters.projectList.projectSelected = payload.projectDescription;
+                // state.taskForm.filters.roadmapList.roadmapSelected = payload.roadmapDescription;
+            }
+            else {
+                state.isMantisEdited = false;
+                state.referenceValidated = false;
+            }
+        },
     }
 });
 
@@ -96,4 +136,8 @@ export const {
     loadRoadmapData,
     setModalState,
     setActionType,
+    setFingerprintMantis,
+    setLabelReference,
+    setSelectedRoadmap,
+    setReferenceValidated,
 } = taskSlice.actions;

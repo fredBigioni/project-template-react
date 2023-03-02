@@ -19,8 +19,20 @@ import {
 
 } from '@mui/icons-material';
 import './Dash.css';
+import { useDispatch } from "react-redux";
+import { ping } from "../../../store";
+import { useEffect } from "react";
+
 
 export const Home = () => {
+
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(ping());
+    }, []);
+
     return (
         <>
             <Grid container spacing={1}>

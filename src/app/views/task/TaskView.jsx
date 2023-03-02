@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import MaterialReactTable from 'material-react-table';
-import { getUserTasks, getOpenTasks, loadEditData, getProjectsData, setModalState, editTask, setActionType } from "../../../store";
+import { getUserTasks, getOpenTasks, loadEditData, getProjectsData, setModalState, editTask, setActionType, setFingerprintMantis, setLabelReference } from "../../../store";
 import { Box, Card, CircularProgress, Grid, IconButton, Stack, Tooltip } from '@mui/material';
 import { AccordionComponent } from '../../../ui';
 import { AlarmAdd, AlarmOn, Edit } from '@mui/icons-material'
@@ -163,13 +163,13 @@ export const TaskView = () => {
 
   const validateOpenedTask = () => {
 
-    if (teamData.length > 0) {
+    if (teamData) {
 
       let openTask = teamData.filter((p) => {
         return p.userId === id
       });
 
-      
+
       if (openTask.length > 0)
         setIsOpenedTask(true)
       else
@@ -182,12 +182,14 @@ export const TaskView = () => {
 
   const handleClose = (value) => {
     dispatch(setModalState(false));
+    dispatch(setFingerprintMantis(false));
+    dispatch(setLabelReference(null));
   };
 
   const openModal = (row) => {
 
     const userId = row.original.userId;
-    
+
     if (userId === id) {
       const taskId = row.original.id;
       dispatch(editTask(taskId));
@@ -235,7 +237,7 @@ export const TaskView = () => {
               <Card>
                 <Stack spacing={1} direction="column">
                   {
-                    isLoading ? <CircularProgress disableShrink /> :
+                    !teamData || !personalData ? <CircularProgress disableShrink /> :
                       <>
                         <AccordionComponent>
                           <MaterialReactTable

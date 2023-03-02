@@ -9,14 +9,12 @@ export const AuthLayout = ({ children, title = '' }) => {
 
     return (     
         <Grid container>
-            <Grid item className="back"
-                sx={{ backgroundColor: 'primary.main' }}
-            >
-                <section class="vertical">
-                    <div class="separator"></div>
+            <Grid item className="back">
+                <section className="vertical">
+                    <div className="separator"></div>
                 </section>
             </Grid>
-            <Grid item class="front">
+            <Grid item className="front">
                 <Grid item
                     xs={false}
                     sx={{
@@ -41,13 +39,13 @@ export const AuthLayout = ({ children, title = '' }) => {
                         // minHeight: 50 + 'vh',
                         pt: 12,
                         ml: 70,
-                        mt: 20,
+                        mt: 10,
                         display: 'grid',
                         placeItems: 'center',
                         borderColor: 'secondary.dark'
                     }}>
 
-                    <Typography variant='h5' sx={{ mb: 1, color: 'secondary.main' }}>{title}</Typography>
+                    <Typography variant='h5' sx={{ mb: 1 }}>{title}</Typography>
 
                     {children}
 
